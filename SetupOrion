@@ -2899,6 +2899,670 @@ esconder_senha() {
   fi
 }
 
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+##                              SISTEMA DE ENVIRONMENTS - GUARDIA/IULIA                       ##
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+
+# Directorio para almacenar configuraciones de environments
+ENV_DIR="/root/dados_vps/envs"
+
+# Crear directorio de environments si no existe
+mkdir -p "$ENV_DIR"
+
+# Función para generar secretos aleatorios
+generate_secret() {
+    openssl rand -base64 32 | tr -d "=+/" | cut -c1-32
+}
+
+# Función para generar contraseñas seguras
+generate_password() {
+    openssl rand -base64 24 | tr -d "=+/" | cut -c1-24
+}
+
+# Crear nuevo environment
+create_environment() {
+    clear
+    echo ""
+    echo -e "${amarelo}===========================================  ============================================${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}=                    ${branco}CREAR NUEVO ENVIRONMENT${amarelo}                                           =${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo ""
+    echo -e "${branco}Environments existentes:${reset}"
+
+    # Listar environments existentes
+    if [ "$(ls -A $ENV_DIR 2>/dev/null)" ]; then
+        for env in "$ENV_DIR"/*; do
+            echo "  - $(basename "$env")"
+        done
+    else
+        echo "  (ninguno)"
+    fi
+
+    echo ""
+    echo -en "${amarelo}Nombre del nuevo environment: ${reset}"
+    read -r env_name
+
+    # Validar que el nombre no esté vacío
+    if [ -z "$env_name" ]; then
+        echo ""
+        echo -e "${vermelho}Error: El nombre no puede estar vacío${reset}"
+        sleep 2
+        return 1
+    fi
+
+    # Crear directorio del environment
+    local env_path="$ENV_DIR/$env_name"
+    if [ -d "$env_path" ]; then
+        echo ""
+        echo -e "${vermelho}Error: El environment '$env_name' ya existe${reset}"
+        sleep 2
+        return 1
+    fi
+
+    mkdir -p "$env_path"
+    echo ""
+    echo -e "${verde}✓ Environment '$env_name' creado exitosamente${reset}"
+    sleep 2
+}
+
+# Listar environments
+list_environments() {
+    clear
+    echo ""
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}=                    ${branco}ENVIRONMENTS DISPONIBLES${amarelo}                                         =${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo ""
+
+    if [ "$(ls -A $ENV_DIR 2>/dev/null)" ]; then
+        for env in "$ENV_DIR"/*; do
+            local env_name=$(basename "$env")
+            echo -e "  ${verde}●${reset} ${branco}$env_name${reset}"
+
+            # Mostrar aplicaciones instaladas en este environment
+            if [ -f "$env/.guardia_installed" ]; then
+                echo -e "    ${bege}└─ GuardIA instalado${reset}"
+            fi
+            if [ -f "$env/.iulia_installed" ]; then
+                echo -e "    ${bege}└─ IulIA instalado${reset}"
+            fi
+            echo ""
+        done
+    else
+        echo -e "  ${vermelho}No hay environments creados${reset}"
+        echo ""
+        echo -e "  ${branco}Usa la opción 90 para crear un nuevo environment${reset}"
+    fi
+
+    echo ""
+    read -p "Presiona ENTER para continuar..."
+}
+
+# Seleccionar environment activo
+select_environment() {
+    clear
+    echo ""
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}=                    ${branco}SELECCIONAR ENVIRONMENT${amarelo}                                          =${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo ""
+
+    if [ ! "$(ls -A $ENV_DIR 2>/dev/null)" ]; then
+        echo -e "${vermelho}No hay environments disponibles${reset}"
+        echo ""
+        echo -e "Usa la opción 90 para crear un nuevo environment"
+        echo ""
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    echo -e "${branco}Environments disponibles:${reset}"
+    echo ""
+
+    local count=1
+    declare -a env_array
+
+    for env in "$ENV_DIR"/*; do
+        local env_name=$(basename "$env")
+        env_array[$count]="$env_name"
+        echo -e "  ${verde}[$count]${reset} $env_name"
+        count=$((count + 1))
+    done
+
+    echo ""
+    echo -en "${amarelo}Selecciona un environment (número): ${reset}"
+    read -r selection
+
+    if [ -z "$selection" ] || [ "$selection" -lt 1 ] || [ "$selection" -ge "$count" ]; then
+        echo ""
+        echo -e "${vermelho}Selección inválida${reset}"
+        sleep 2
+        return 1
+    fi
+
+    local selected_env="${env_array[$selection]}"
+    echo "$selected_env" > "$HOME/.current_environment"
+
+    echo ""
+    echo -e "${verde}✓ Environment '$selected_env' seleccionado${reset}"
+    sleep 2
+}
+
+# Obtener environment actual
+get_current_environment() {
+    if [ -f "$HOME/.current_environment" ]; then
+        cat "$HOME/.current_environment"
+    else
+        echo ""
+    fi
+}
+
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+##                              INSTALADOR GUARDIA - SISTEMA SaaS IA                          ##
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+
+ferramenta_guardia() {
+    local instance_suffix="$1"
+    local env_name=$(get_current_environment)
+
+    if [ -z "$env_name" ]; then
+        clear
+        echo ""
+        echo -e "${vermelho}ERROR: Debes seleccionar un environment primero${reset}"
+        echo ""
+        echo -e "Usa la opción ${amarelo}92${reset} para seleccionar un environment"
+        echo ""
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    local env_path="$ENV_DIR/$env_name"
+    local config_file="$env_path/guardia_${instance_suffix}.env"
+
+    clear
+    echo ""
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}=                    ${branco}INSTALADOR GUARDIA IA - ${env_name}${amarelo}                             =${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo ""
+    echo -e "${branco}Configuración de variables de entorno para GuardIA${reset}"
+    echo ""
+
+    # === DOMAIN ===
+    echo -e "${bege}[1/15] Dominio principal${reset}"
+    echo -en "${amarelo}DOMAIN (ej: guardia-${env_name}.tudominio.com): ${reset}"
+    read -r DOMAIN
+
+    # === DATABASE (Supabase) ===
+    echo ""
+    echo -e "${bege}[2/15] Base de datos Supabase - Host${reset}"
+    echo -en "${amarelo}SUPABASE_DB_HOST: ${reset}"
+    read -r SUPABASE_DB_HOST
+
+    echo ""
+    echo -e "${bege}[3/15] Base de datos Supabase - Nombre${reset}"
+    echo -en "${amarelo}SUPABASE_DB_NAME: ${reset}"
+    read -r SUPABASE_DB_NAME
+
+    echo ""
+    echo -e "${bege}[4/15] Base de datos Supabase - Usuario${reset}"
+    echo -en "${amarelo}SUPABASE_DB_USER: ${reset}"
+    read -r SUPABASE_DB_USER
+
+    echo ""
+    echo -e "${bege}[5/15] Base de datos Supabase - Contraseña${reset}"
+    echo -en "${amarelo}SUPABASE_DB_PASSWORD: ${reset}"
+    read -rs SUPABASE_DB_PASSWORD
+    echo ""
+
+    # === REDIS ===
+    echo ""
+    echo -e "${bege}[6/15] Redis - Host${reset}"
+    echo -en "${amarelo}REDIS_HOST (default: localhost): ${reset}"
+    read -r REDIS_HOST
+    REDIS_HOST="${REDIS_HOST:-localhost}"
+
+    echo ""
+    echo -e "${bege}[7/15] Redis - Contraseña${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}REDIS_PASSWORD: ${reset}"
+    read -rs REDIS_PASSWORD
+    echo ""
+    [ -z "$REDIS_PASSWORD" ] && REDIS_PASSWORD=$(generate_password)
+
+    # === MINIO ===
+    echo ""
+    echo -e "${bege}[8/15] MinIO - Endpoint${reset}"
+    echo -en "${amarelo}MINIO_ENDPOINT (ej: minio.tudominio.com:9000): ${reset}"
+    read -r MINIO_ENDPOINT
+
+    echo ""
+    echo -e "${bege}[9/15] MinIO - Access Key${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}MINIO_ACCESS_KEY: ${reset}"
+    read -r MINIO_ACCESS_KEY
+    [ -z "$MINIO_ACCESS_KEY" ] && MINIO_ACCESS_KEY="guardia_$(generate_secret | cut -c1-16)"
+
+    echo ""
+    echo -e "${bege}[10/15] MinIO - Secret Key${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}MINIO_SECRET_KEY: ${reset}"
+    read -rs MINIO_SECRET_KEY
+    echo ""
+    [ -z "$MINIO_SECRET_KEY" ] && MINIO_SECRET_KEY=$(generate_secret)
+
+    # === RETELL AI ===
+    echo ""
+    echo -e "${bege}[11/15] Retell AI - API Key${reset}"
+    echo -en "${amarelo}RETELL_API_KEY: ${reset}"
+    read -rs RETELL_API_KEY
+    echo ""
+
+    echo ""
+    echo -e "${bege}[12/15] Retell AI - Agent ID${reset}"
+    echo -en "${amarelo}RETELL_AGENT_ID: ${reset}"
+    read -r RETELL_AGENT_ID
+
+    echo ""
+    echo -e "${bege}[13/15] Retell AI - Número de teléfono${reset}"
+    echo -en "${amarelo}RETELL_PHONE_NUMBER (formato: +34XXXXXXXXX): ${reset}"
+    read -r RETELL_PHONE_NUMBER
+
+    # === SMTP ===
+    echo ""
+    echo -e "${bege}[14/15] SMTP - Configuración${reset}"
+    echo -en "${amarelo}SMTP_SERVER: ${reset}"
+    read -r SMTP_SERVER
+
+    echo -en "${amarelo}SMTP_PORT (default: 587): ${reset}"
+    read -r SMTP_PORT
+    SMTP_PORT="${SMTP_PORT:-587}"
+
+    echo -en "${amarelo}SMTP_USER: ${reset}"
+    read -r SMTP_USER
+
+    echo -en "${amarelo}SMTP_PASSWORD: ${reset}"
+    read -rs SMTP_PASSWORD
+    echo ""
+
+    echo -en "${amarelo}ADMIN_ICAT_EMAIL: ${reset}"
+    read -r ADMIN_ICAT_EMAIL
+
+    # === SECRET_KEY ===
+    echo ""
+    echo -e "${bege}[15/15] Secret Key (autogenerado)${reset}"
+    SECRET_KEY=$(generate_secret)
+    echo -e "${verde}✓ SECRET_KEY generado${reset}"
+
+    # Guardar configuración
+    cat > "$config_file" <<EOF
+# GuardIA Configuration - Environment: $env_name
+# Instance: ${instance_suffix:-production}
+# Generated: $(date)
+
+DOMAIN=$DOMAIN
+ENVIRONMENT=${instance_suffix:-production}
+
+# Database (Supabase)
+SUPABASE_DB_HOST=$SUPABASE_DB_HOST
+SUPABASE_DB_NAME=$SUPABASE_DB_NAME
+SUPABASE_DB_USER=$SUPABASE_DB_USER
+SUPABASE_DB_PASSWORD=$SUPABASE_DB_PASSWORD
+
+# Redis
+REDIS_HOST=$REDIS_HOST
+REDIS_PORT=6379
+REDIS_PASSWORD=$REDIS_PASSWORD
+
+# MinIO
+MINIO_ENDPOINT=$MINIO_ENDPOINT
+MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+MINIO_SECRET_KEY=$MINIO_SECRET_KEY
+MINIO_USE_SSL=true
+
+# Retell AI
+RETELL_API_KEY=$RETELL_API_KEY
+RETELL_AGENT_ID=$RETELL_AGENT_ID
+RETELL_PHONE_NUMBER=$RETELL_PHONE_NUMBER
+
+# SMTP
+SMTP_SERVER=$SMTP_SERVER
+SMTP_PORT=$SMTP_PORT
+SMTP_USER=$SMTP_USER
+SMTP_PASSWORD=$SMTP_PASSWORD
+ADMIN_ICAT_EMAIL=$ADMIN_ICAT_EMAIL
+
+# Security
+SECRET_KEY=$SECRET_KEY
+EOF
+
+    chmod 600 "$config_file"
+
+    echo ""
+    echo -e "${verde}✓ Configuración guardada en: $config_file${reset}"
+    echo ""
+
+    # Crear el stack usando la función existente
+    local stack_name="guardia_${env_name}${instance_suffix:+_$instance_suffix}"
+
+    echo -e "${branco}Preparando deployment del stack...${reset}"
+    echo ""
+
+    # Exportar variables de entorno para envsubst
+    export STACK_NAME="$stack_name"
+    export ENV_NAME="$env_name"
+    export INSTANCE_SUFFIX="${instance_suffix:-production}"
+
+    # Cargar todas las variables del archivo de configuración
+    set -a
+    source "$config_file"
+    set +a
+
+    # Verificar que existe el template
+    local template_file="/root/templates/guardia/docker-compose.yml"
+    if [ ! -f "$template_file" ]; then
+        echo -e "${vermelho}ERROR: No se encuentra el template en $template_file${reset}"
+        echo ""
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    # Generar el archivo YAML del stack con sustitución de variables
+    echo -e "${branco}Generando archivo de stack...${reset}"
+    envsubst < "$template_file" > "$stack_name.yaml"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${verde}✓ Archivo de stack generado: $stack_name.yaml${reset}"
+    else
+        echo -e "${vermelho}✗ Error al generar archivo de stack${reset}"
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    echo ""
+    echo -e "${branco}Resumen de configuración:${reset}"
+    echo -e "  Environment: ${verde}$env_name${reset}"
+    echo -e "  Domain: ${verde}$DOMAIN${reset}"
+    echo -e "  Stack name: ${verde}$stack_name${reset}"
+    echo -e "  Template: ${verde}$template_file${reset}"
+    echo -e "  Output: ${verde}$stack_name.yaml${reset}"
+    echo ""
+
+    # Preguntar si desea hacer el deploy
+    echo -en "${amarelo}¿Desea hacer el deploy ahora? (s/n): ${reset}"
+    read -r deploy_now
+
+    if [ "$deploy_now" = "s" ] || [ "$deploy_now" = "S" ]; then
+        echo ""
+        echo -e "${branco}Iniciando deployment en Portainer...${reset}"
+        echo ""
+
+        # Llamar a stack_editavel para hacer el deploy
+        stack_editavel
+
+        # Marcar como instalado
+        touch "$env_path/.guardia_installed"
+
+        echo ""
+        echo -e "${verde}✓ Stack GuardIA desplegado exitosamente${reset}"
+        echo ""
+    else
+        echo ""
+        echo -e "${amarelo}Deploy cancelado. El archivo $stack_name.yaml está listo para deployment manual.${reset}"
+        echo ""
+    fi
+
+    read -p "Presiona ENTER para continuar..."
+}
+
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+##                              INSTALADOR IULIA - SISTEMA DOCUMENTAL IA                      ##
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+
+ferramenta_iulia() {
+    local instance_suffix="$1"
+    local env_name=$(get_current_environment)
+
+    if [ -z "$env_name" ]; then
+        clear
+        echo ""
+        echo -e "${vermelho}ERROR: Debes seleccionar un environment primero${reset}"
+        echo ""
+        echo -e "Usa la opción ${amarelo}92${reset} para seleccionar un environment"
+        echo ""
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    local env_path="$ENV_DIR/$env_name"
+    local config_file="$env_path/iulia_${instance_suffix}.env"
+
+    clear
+    echo ""
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}=                    ${branco}INSTALADOR IULIA IA - ${env_name}${amarelo}                              =${reset}"
+    echo -e "${amarelo}=                                                                                      =${reset}"
+    echo -e "${amarelo}========================================================================================${reset}"
+    echo ""
+    echo -e "${branco}Configuración de variables de entorno para IulIA${reset}"
+    echo ""
+
+    # === DOMAIN ===
+    echo -e "${bege}[1/12] Dominio principal${reset}"
+    echo -en "${amarelo}DOMAIN (ej: iulia-${env_name}.tudominio.com): ${reset}"
+    read -r DOMAIN
+
+    # === DATABASE (PostgreSQL) ===
+    echo ""
+    echo -e "${bege}[2/12] Base de datos PostgreSQL - Usuario${reset}"
+    echo -en "${amarelo}POSTGRES_USER (default: iulia): ${reset}"
+    read -r POSTGRES_USER
+    POSTGRES_USER="${POSTGRES_USER:-iulia}"
+
+    echo ""
+    echo -e "${bege}[3/12] Base de datos PostgreSQL - Contraseña${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}POSTGRES_PASSWORD: ${reset}"
+    read -rs POSTGRES_PASSWORD
+    echo ""
+    [ -z "$POSTGRES_PASSWORD" ] && POSTGRES_PASSWORD=$(generate_password)
+
+    echo ""
+    echo -e "${bege}[4/12] Base de datos PostgreSQL - Nombre${reset}"
+    echo -en "${amarelo}POSTGRES_DB (default: iulia_db): ${reset}"
+    read -r POSTGRES_DB
+    POSTGRES_DB="${POSTGRES_DB:-iulia_db}"
+
+    # === REDIS ===
+    echo ""
+    echo -e "${bege}[5/12] Redis - Contraseña${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}REDIS_PASSWORD: ${reset}"
+    read -rs REDIS_PASSWORD
+    echo ""
+    [ -z "$REDIS_PASSWORD" ] && REDIS_PASSWORD=$(generate_password)
+
+    # === API KEYS ===
+    echo ""
+    echo -e "${bege}[6/12] OpenAI API Key${reset}"
+    echo -en "${amarelo}OPENAI_API_KEY: ${reset}"
+    read -rs OPENAI_API_KEY
+    echo ""
+
+    echo ""
+    echo -e "${bege}[7/12] HuggingFace Token (opcional)${reset}"
+    echo -en "${amarelo}HF_TOKEN: ${reset}"
+    read -rs HF_TOKEN
+    echo ""
+
+    # === USER PASSWORDS ===
+    echo ""
+    echo -e "${bege}[8/12] Contraseña usuario GOD${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}GOD_PASSWORD: ${reset}"
+    read -rs GOD_PASSWORD
+    echo ""
+    [ -z "$GOD_PASSWORD" ] && GOD_PASSWORD=$(generate_password)
+
+    echo ""
+    echo -e "${bege}[9/12] Contraseña usuario ADMIN${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}ADMIN_PASSWORD: ${reset}"
+    read -rs ADMIN_PASSWORD
+    echo ""
+    [ -z "$ADMIN_PASSWORD" ] && ADMIN_PASSWORD=$(generate_password)
+
+    # === SECURITY ===
+    echo ""
+    echo -e "${bege}[10/12] Security Keys (autogenerados)${reset}"
+    SECRET_KEY=$(generate_secret)
+    FLASK_PASSWORD=$(generate_password)
+    echo -e "${verde}✓ SECRET_KEY y FLASK_PASSWORD generados${reset}"
+
+    # === MONITORING ===
+    echo ""
+    echo -e "${bege}[11/12] Grafana - Contraseña admin${reset}"
+    echo -e "${branco}(dejar vacío para autogenerar)${reset}"
+    echo -en "${amarelo}GRAFANA_PASSWORD: ${reset}"
+    read -rs GRAFANA_PASSWORD
+    echo ""
+    [ -z "$GRAFANA_PASSWORD" ] && GRAFANA_PASSWORD=$(generate_password)
+
+    # DATABASE_URL derivado
+    echo ""
+    echo -e "${bege}[12/12] Generando DATABASE_URL...${reset}"
+    DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+    REDIS_URL="redis://:${REDIS_PASSWORD}@redis:6379/0"
+    echo -e "${verde}✓ URLs de conexión generadas${reset}"
+
+    # Guardar configuración
+    cat > "$config_file" <<EOF
+# IulIA Configuration - Environment: $env_name
+# Instance: ${instance_suffix:-production}
+# Generated: $(date)
+
+DOMAIN=$DOMAIN
+ENVIRONMENT=${instance_suffix:-production}
+
+# Database (PostgreSQL)
+POSTGRES_USER=$POSTGRES_USER
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+POSTGRES_DB=$POSTGRES_DB
+DATABASE_URL=$DATABASE_URL
+
+# Redis
+REDIS_PASSWORD=$REDIS_PASSWORD
+REDIS_URL=$REDIS_URL
+
+# API Keys
+OPENAI_API_KEY=$OPENAI_API_KEY
+HF_TOKEN=$HF_TOKEN
+
+# User Passwords
+GOD_PASSWORD=$GOD_PASSWORD
+ADMIN_PASSWORD=$ADMIN_PASSWORD
+
+# Security
+SECRET_KEY=$SECRET_KEY
+FLASK_PASSWORD=$FLASK_PASSWORD
+
+# Monitoring
+GRAFANA_PASSWORD=$GRAFANA_PASSWORD
+
+# Flask
+FLASK_ENV=production
+FLASK_DEBUG=false
+EOF
+
+    chmod 600 "$config_file"
+
+    echo ""
+    echo -e "${verde}✓ Configuración guardada en: $config_file${reset}"
+    echo ""
+
+    # Crear el stack usando la función existente
+    local stack_name="iulia_${env_name}${instance_suffix:+_$instance_suffix}"
+
+    echo -e "${branco}Preparando deployment del stack...${reset}"
+    echo ""
+
+    # Exportar variables de entorno para envsubst
+    export STACK_NAME="$stack_name"
+    export ENV_NAME="$env_name"
+    export INSTANCE_SUFFIX="${instance_suffix:-production}"
+
+    # Cargar todas las variables del archivo de configuración
+    set -a
+    source "$config_file"
+    set +a
+
+    # Verificar que existe el template
+    local template_file="/root/templates/iulia/docker-compose.yml"
+    if [ ! -f "$template_file" ]; then
+        echo -e "${vermelho}ERROR: No se encuentra el template en $template_file${reset}"
+        echo ""
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    # Generar el archivo YAML del stack con sustitución de variables
+    echo -e "${branco}Generando archivo de stack...${reset}"
+    envsubst < "$template_file" > "$stack_name.yaml"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${verde}✓ Archivo de stack generado: $stack_name.yaml${reset}"
+    else
+        echo -e "${vermelho}✗ Error al generar archivo de stack${reset}"
+        read -p "Presiona ENTER para continuar..."
+        return 1
+    fi
+
+    echo ""
+    echo -e "${branco}Resumen de configuración:${reset}"
+    echo -e "  Environment: ${verde}$env_name${reset}"
+    echo -e "  Domain: ${verde}$DOMAIN${reset}"
+    echo -e "  Stack name: ${verde}$stack_name${reset}"
+    echo -e "  GOD password: ${verde}$GOD_PASSWORD${reset}"
+    echo -e "  ADMIN password: ${verde}$ADMIN_PASSWORD${reset}"
+    echo -e "  Template: ${verde}$template_file${reset}"
+    echo -e "  Output: ${verde}$stack_name.yaml${reset}"
+    echo ""
+
+    # Preguntar si desea hacer el deploy
+    echo -en "${amarelo}¿Desea hacer el deploy ahora? (s/n): ${reset}"
+    read -r deploy_now
+
+    if [ "$deploy_now" = "s" ] || [ "$deploy_now" = "S" ]; then
+        echo ""
+        echo -e "${branco}Iniciando deployment en Portainer...${reset}"
+        echo ""
+
+        # Llamar a stack_editavel para hacer el deploy
+        stack_editavel
+
+        # Marcar como instalado
+        touch "$env_path/.iulia_installed"
+
+        echo ""
+        echo -e "${verde}✓ Stack IulIA desplegado exitosamente${reset}"
+        echo ""
+    else
+        echo ""
+        echo -e "${amarelo}Deploy cancelado. El archivo $stack_name.yaml está listo para deployment manual.${reset}"
+        echo ""
+    fi
+
+    read -p "Presiona ENTER para continuar..."
+}
 
 
 ## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
@@ -36804,6 +37468,40 @@ while true; do
         
         limpar|clean|LIMPAR|CLEAN|expurgar|EXPURGAR)
             limpar
+            ;;
+
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+##                          MENU OPTIONS - GUARDIA/IULIA ENVIRONMENTS                         ##
+## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
+
+        90)
+            create_environment
+            ;;
+
+        91)
+            list_environments
+            ;;
+
+        92)
+            select_environment
+            ;;
+
+        93|guardia|GUARDIA)
+            verificar_stack "guardia_$(get_current_environment)${opcao2:+_$opcao2}" && continue || echo ""
+
+            if verificar_docker_e_portainer_traefik; then
+                STACK_NAME="guardia_$(get_current_environment)${opcao2:+_$opcao2}"
+                ferramenta_guardia "$opcao2"
+            fi
+            ;;
+
+        94|iulia|IULIA)
+            verificar_stack "iulia_$(get_current_environment)${opcao2:+_$opcao2}" && continue || echo ""
+
+            if verificar_docker_e_portainer_traefik; then
+                STACK_NAME="iulia_$(get_current_environment)${opcao2:+_$opcao2}"
+                ferramenta_iulia "$opcao2"
+            fi
             ;;
 
 ## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##

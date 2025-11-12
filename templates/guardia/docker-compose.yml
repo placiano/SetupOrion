@@ -1,0 +1,268 @@
+version: '3.8'
+
+# ============================================
+# GUARD-IA SWARM STACK - ${STACK_NAME}
+# ============================================
+# Deployment for environment: ${ENV_NAME}
+# Instance: ${INSTANCE_SUFFIX}
+# Generated: $(date)
+# ============================================
+# Architecture:
+# - Traefik v3 reverse proxy (external)
+# - Supabase PostgreSQL (external shared)
+# - MinIO S3 storage (external shared)
+# - Redis (local to stack)
+# - Guard-IA App + Cron
+# ============================================
+
+services:
+  # ============================================
+  # GUARD-IA APPLICATION
+  # ============================================
+  app:
+    image: placiano/guardia:develop
+    environment:
+      # Flask Environment
+      - FLASK_ENV=${ENVIRONMENT}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - TZ=Europe/Madrid
+
+      # Supabase PostgreSQL (SHARED - External)
+      - DB_HOST=${SUPABASE_DB_HOST}
+      - DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - DB_NAME=${SUPABASE_DB_NAME}
+      - DB_USER=${SUPABASE_DB_USER}
+      - DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+      - DB_POOL_MIN=${DB_POOL_MIN:-5}
+      - DB_POOL_MAX=${DB_POOL_MAX:-20}
+
+      # Redis (LOCAL - This Stack)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=0
+
+      # MinIO S3 (SHARED - External)
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-true}
+      - MINIO_BUCKET_BACKUPS=${MINIO_BUCKET_BACKUPS:-guard-ia-backups}
+      - MINIO_BUCKET_LOGS=${MINIO_BUCKET_LOGS:-guard-ia-logs}
+      - MINIO_BUCKET_REPORTS=${MINIO_BUCKET_REPORTS:-guard-ia-reports}
+      - MINIO_BUCKET_RECORDINGS=${MINIO_BUCKET_RECORDINGS:-guard-ia-recordings}
+
+      # Retell AI
+      - RETELL_API_KEY=${RETELL_API_KEY}
+      - RETELL_AGENT_ID=${RETELL_AGENT_ID}
+      - RETELL_PHONE_NUMBER=${RETELL_PHONE_NUMBER}
+
+      # SMTP Configuration
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ADMIN_ICAT_EMAIL=${ADMIN_ICAT_EMAIL}
+
+      # Application Settings
+      - TIMEZONE=Europe/Madrid
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - WAIT_TIME_SECONDS=${WAIT_TIME_SECONDS:-120}
+      - MAX_REINTENTOS_GUARDIA=${MAX_REINTENTOS_GUARDIA:-3}
+      - MAX_DIAS_PROGRAMACION=${MAX_DIAS_PROGRAMACION:-7}
+      - CRON_INTERVAL_MINUTES=${CRON_INTERVAL_MINUTES:-30}
+      - MIN_MINUTOS_FUTUROS=${MIN_MINUTOS_FUTUROS:-30}
+      - STEP_MINUTOS_INTERVALO=${STEP_MINUTOS_INTERVALO:-30}
+      - ENABLE_TEST_WEBHOOKS=${ENABLE_TEST_WEBHOOKS:-false}
+      - DEV_MODE=false
+
+      # Webhook URL (Traefik)
+      - WEBHOOK_BASE_URL=https://${DOMAIN}
+
+      # Application Version
+      - APP_VERSION=${APP_VERSION:-v1.0.0}
+      - APP_COPYRIGHT_YEAR=2025
+
+      # Security
+      - SECRET_KEY=${SECRET_KEY}
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      labels:
+        # Traefik Configuration
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+
+        # Web Server (9000) - Main Interface
+        - "traefik.http.routers.${STACK_NAME}-web.rule=Host(`${DOMAIN}`)"
+        - "traefik.http.routers.${STACK_NAME}-web.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}-web.tls=true"
+        - "traefik.http.routers.${STACK_NAME}-web.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.${STACK_NAME}-web.service=${STACK_NAME}-web-service"
+        - "traefik.http.services.${STACK_NAME}-web-service.loadbalancer.server.port=9000"
+
+        # API Server (8000)
+        - "traefik.http.routers.${STACK_NAME}-api.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.${STACK_NAME}-api.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}-api.tls=true"
+        - "traefik.http.routers.${STACK_NAME}-api.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.${STACK_NAME}-api.service=${STACK_NAME}-api-service"
+        - "traefik.http.services.${STACK_NAME}-api-service.loadbalancer.server.port=8000"
+
+        # Webhooks Retell (5001)
+        - "traefik.http.routers.${STACK_NAME}-webhook.rule=Host(`${DOMAIN}`) && PathPrefix(`/webhook`)"
+        - "traefik.http.routers.${STACK_NAME}-webhook.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}-webhook.tls=true"
+        - "traefik.http.routers.${STACK_NAME}-webhook.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.${STACK_NAME}-webhook.service=${STACK_NAME}-webhook-service"
+        - "traefik.http.services.${STACK_NAME}-webhook-service.loadbalancer.server.port=5001"
+
+        # WebSocket (6000)
+        - "traefik.http.routers.${STACK_NAME}-ws.rule=Host(`${DOMAIN}`) && PathPrefix(`/ws`)"
+        - "traefik.http.routers.${STACK_NAME}-ws.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}-ws.tls=true"
+        - "traefik.http.routers.${STACK_NAME}-ws.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.${STACK_NAME}-ws.service=${STACK_NAME}-ws-service"
+        - "traefik.http.services.${STACK_NAME}-ws-service.loadbalancer.server.port=6000"
+
+        # Middleware for security headers
+        - "traefik.http.routers.${STACK_NAME}-web.middlewares=${STACK_NAME}-security@docker"
+        - "traefik.http.middlewares.${STACK_NAME}-security.headers.sslredirect=true"
+        - "traefik.http.middlewares.${STACK_NAME}-security.headers.stsSeconds=31536000"
+        - "traefik.http.middlewares.${STACK_NAME}-security.headers.stsIncludeSubdomains=true"
+        - "traefik.http.middlewares.${STACK_NAME}-security.headers.stsPreload=true"
+
+    volumes:
+      - ${STACK_NAME}_logs:/app/logs:rw
+
+    networks:
+      - traefik  # External - Traefik access
+      - ${STACK_NAME}_internal  # Internal - Redis, etc.
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # REDIS (Local to this stack)
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - TZ=Europe/Madrid
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+
+    volumes:
+      - ${STACK_NAME}_redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "sh", "-c", "redis-cli -a $$REDIS_PASSWORD ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+    networks:
+      - ${STACK_NAME}_internal
+
+  # ============================================
+  # CRON SERVICE
+  # ============================================
+  cron:
+    image: placiano/guardia:develop
+    environment:
+      # Flask Environment
+      - FLASK_ENV=${ENVIRONMENT}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - TZ=Europe/Madrid
+
+      # Supabase PostgreSQL (SHARED)
+      - DB_HOST=${SUPABASE_DB_HOST}
+      - DB_PORT=${SUPABASE_DB_PORT:-5432}
+      - DB_NAME=${SUPABASE_DB_NAME}
+      - DB_USER=${SUPABASE_DB_USER}
+      - DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+
+      # Redis (LOCAL)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+      # MinIO (SHARED)
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-true}
+
+      # Retell AI
+      - RETELL_API_KEY=${RETELL_API_KEY}
+      - RETELL_AGENT_ID=${RETELL_AGENT_ID}
+      - RETELL_PHONE_NUMBER=${RETELL_PHONE_NUMBER}
+
+      # Cron Settings
+      - CRON_INTERVAL_MINUTES=${CRON_INTERVAL_MINUTES:-30}
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+
+    networks:
+      - ${STACK_NAME}_internal
+
+    volumes:
+      - ${STACK_NAME}_cron_logs:/var/log:rw
+
+    command: >
+      sh -c "
+      apt-get update && apt-get install -y cron &&
+      chmod +x /app/app/cron/setup_cron.sh &&
+      /app/app/cron/setup_cron.sh
+      "
+
+# ============================================
+# VOLUMES
+# ============================================
+volumes:
+  ${STACK_NAME}_redis_data:
+    driver: local
+  ${STACK_NAME}_logs:
+    driver: local
+  ${STACK_NAME}_cron_logs:
+    driver: local
+
+# ============================================
+# NETWORKS
+# ============================================
+networks:
+  # Traefik network (external - already exists)
+  traefik:
+    external: true
+    name: traefik
+
+  # Internal overlay network for this stack
+  ${STACK_NAME}_internal:
+    driver: overlay
+    attachable: true

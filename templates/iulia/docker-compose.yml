@@ -1,0 +1,332 @@
+version: '3.8'
+
+# ==========================================
+# IulIA SWARM STACK - ${STACK_NAME}
+# ==========================================
+# Deployment for environment: ${ENV_NAME}
+# Instance: ${INSTANCE_SUFFIX}
+# Generated: $(date)
+# ==========================================
+# Architecture:
+# - Traefik v3 reverse proxy (external)
+# - PostgreSQL (local to stack)
+# - Redis (local to stack)
+# - Prometheus + Grafana (monitoring)
+# - IulIA App
+# ==========================================
+
+services:
+  # ==========================================
+  # POSTGRESQL DATABASE
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=Europe/Madrid
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+    volumes:
+      - ${STACK_NAME}_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    networks:
+      - ${STACK_NAME}_internal
+
+  # ==========================================
+  # REDIS CACHE
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+
+    environment:
+      - TZ=Europe/Madrid
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 1G
+
+    volumes:
+      - ${STACK_NAME}_redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "sh", "-c", "redis-cli -a $$REDIS_PASSWORD ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - ${STACK_NAME}_internal
+
+  # ==========================================
+  # APLICACIÓN PRINCIPAL - IulIA
+  # ==========================================
+  app:
+    image: placiano/iulia:develop
+    environment:
+      # Domain & Environment
+      - DOMAIN=${DOMAIN}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - TZ=Europe/Madrid
+
+      # Database (PostgreSQL)
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=${DATABASE_URL}
+
+      # Redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_URL=${REDIS_URL}
+
+      # API Keys
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+
+      # Security
+      - SECRET_KEY=${SECRET_KEY}
+      - FLASK_PASSWORD=${FLASK_PASSWORD}
+
+      # User Credentials
+      - GOD_PASSWORD=${GOD_PASSWORD}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+
+      # Flask Settings
+      - FLASK_ENV=${ENVIRONMENT}
+      - FLASK_DEBUG=false
+
+      # Application Settings
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      resources:
+        limits:
+          cpus: '${DOCKER_CPU_LIMIT:-3.5}'
+          memory: ${DOCKER_MEMORY_LIMIT:-12G}
+        reservations:
+          cpus: '${DOCKER_CPU_RESERVATION:-2}'
+          memory: ${DOCKER_MEMORY_RESERVATION:-8G}
+      labels:
+        # Traefik Configuration
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+
+        # Router HTTP (redirect to HTTPS)
+        - "traefik.http.routers.${STACK_NAME}-http.rule=Host(`${DOMAIN}`)"
+        - "traefik.http.routers.${STACK_NAME}-http.entrypoints=web"
+        - "traefik.http.routers.${STACK_NAME}-http.middlewares=${STACK_NAME}-redirect-to-https"
+
+        # Router HTTPS
+        - "traefik.http.routers.${STACK_NAME}.rule=Host(`${DOMAIN}`)"
+        - "traefik.http.routers.${STACK_NAME}.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}.tls=true"
+        - "traefik.http.routers.${STACK_NAME}.tls.certresolver=letsencrypt"
+
+        # Service - Internal port
+        - "traefik.http.services.${STACK_NAME}.loadbalancer.server.port=5005"
+
+        # Middleware - HTTPS redirect
+        - "traefik.http.middlewares.${STACK_NAME}-redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.${STACK_NAME}-redirect-to-https.redirectscheme.permanent=true"
+
+        # Middleware - Buffering for uploads
+        - "traefik.http.middlewares.${STACK_NAME}-buffering.buffering.maxRequestBodyBytes=524288000"
+        - "traefik.http.routers.${STACK_NAME}.middlewares=${STACK_NAME}-buffering"
+
+        # Timeouts for long operations
+        - "traefik.http.services.${STACK_NAME}.loadbalancer.responseforwardingtimeouts.readtimeout=600s"
+        - "traefik.http.services.${STACK_NAME}.loadbalancer.responseforwardingtimeouts.writetimeout=600s"
+
+    volumes:
+      - ${STACK_NAME}_uploads:/app/uploads
+      - ${STACK_NAME}_logs:/app/logs
+      - ${STACK_NAME}_instance:/app/instance
+      - ${STACK_NAME}_data:/app/data
+      - ${STACK_NAME}_docs:/app/docs
+      - ${STACK_NAME}_embeddings_cache:/app/data/embeddings_cache
+      - ${STACK_NAME}_embedding_models:/root/.cache/huggingface/hub
+
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"from app.core.utils.agent_activity_tracker import is_critical_agent_active; print('OK' if not is_critical_agent_active() else 'BUSY')\" || echo 'OK'"]
+      interval: 300s
+      timeout: 30s
+      retries: 10
+      start_period: 180s
+
+    networks:
+      - traefik  # External - Traefik access
+      - ${STACK_NAME}_internal  # Internal - PostgreSQL, Redis
+
+    depends_on:
+      - postgres
+      - redis
+
+  # ==========================================
+  # PROMETHEUS (Monitoring)
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+
+    volumes:
+      - ${STACK_NAME}_prometheus_data:/prometheus
+      - ${STACK_NAME}_prometheus_config:/etc/prometheus
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+    networks:
+      - ${STACK_NAME}_internal
+
+  # ==========================================
+  # GRAFANA (Visualization)
+  # ==========================================
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=https://grafana.${DOMAIN}
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+      labels:
+        # Traefik Configuration for Grafana
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.${STACK_NAME}-grafana.rule=Host(`grafana.${DOMAIN}`)"
+        - "traefik.http.routers.${STACK_NAME}-grafana.entrypoints=websecure"
+        - "traefik.http.routers.${STACK_NAME}-grafana.tls=true"
+        - "traefik.http.routers.${STACK_NAME}-grafana.tls.certresolver=letsencrypt"
+        - "traefik.http.services.${STACK_NAME}-grafana.loadbalancer.server.port=3000"
+
+    volumes:
+      - ${STACK_NAME}_grafana_data:/var/lib/grafana
+      - ${STACK_NAME}_grafana_dashboards:/etc/grafana/provisioning/dashboards
+      - ${STACK_NAME}_grafana_datasources:/etc/grafana/provisioning/datasources
+
+    networks:
+      - traefik  # External - Traefik access
+      - ${STACK_NAME}_internal  # Internal - Prometheus access
+
+    depends_on:
+      - prometheus
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# ==========================================
+# NETWORKS
+# ==========================================
+networks:
+  # Traefik network (external - already exists)
+  traefik:
+    external: true
+    name: traefik
+
+  # Internal overlay network for this stack
+  ${STACK_NAME}_internal:
+    driver: overlay
+    attachable: true
+    internal: false  # Allow internet access for model downloads
+
+# ==========================================
+# VOLUMES
+# ==========================================
+volumes:
+  ${STACK_NAME}_postgres_data:
+    driver: local
+  ${STACK_NAME}_redis_data:
+    driver: local
+  ${STACK_NAME}_uploads:
+    driver: local
+  ${STACK_NAME}_logs:
+    driver: local
+  ${STACK_NAME}_instance:
+    driver: local
+  ${STACK_NAME}_data:
+    driver: local
+  ${STACK_NAME}_docs:
+    driver: local
+  ${STACK_NAME}_embeddings_cache:
+    driver: local
+  ${STACK_NAME}_embedding_models:
+    driver: local
+  ${STACK_NAME}_prometheus_data:
+    driver: local
+  ${STACK_NAME}_prometheus_config:
+    driver: local
+  ${STACK_NAME}_grafana_data:
+    driver: local
+  ${STACK_NAME}_grafana_dashboards:
+    driver: local
+  ${STACK_NAME}_grafana_datasources:
+    driver: local

@@ -274,15 +274,34 @@ if [ -e "SetupOrion" ]; then
     rm SetupOrion
 fi
 
-# Baixa o script
-curl -sSL https://raw.githubusercontent.com/oriondesign2015/SetupOrion/main/SetupOrion -o SetupOrion
+# Clonar repositorio privado
+echo ""
+echo -e "${amarelo}Este script necesita credenciales Git para acceder al repositorio privado.${reset}"
+echo ""
+echo -en "${amarelo}Usuario GitHub: ${reset}"
+read -r git_user
+echo -en "${amarelo}Token/Password GitHub: ${reset}"
+read -rs git_token
+echo ""
+
+# Clonar el repositorio privado
+git clone --depth 1 https://${git_user}:${git_token}@github.com/placiano/vps_iulia.git /tmp/vps_iulia_setup > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "14/14 - [ OK ] - Baixando o script"
-    # Executa o script baixado
+    echo "14/14 - [ OK ] - Clonando repositorio privado"
+
+    # Copiar SetupOrion y templates al directorio actual
+    cp /tmp/vps_iulia_setup/SetupOrion/SetupOrion .
+    cp -r /tmp/vps_iulia_setup/SetupOrion/templates . 2>/dev/null || true
+
+    # Limpiar repositorio temporal
+    rm -rf /tmp/vps_iulia_setup
+
+    # Ejecutar el script
     chmod +x SetupOrion
     ./SetupOrion
 else
-    echo "14/14 - [ OFF ] - Baixando o script"
+    echo "14/14 - [ OFF ] - Error al clonar repositorio privado"
+    echo "Verifique sus credenciales y conexión a Internet"
     echo "Encerrando o setup"
     sleep 5
 fi
