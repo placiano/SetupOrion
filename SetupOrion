@@ -3193,8 +3193,7 @@ ferramenta_guardia() {
     read -rs SMTP_PASSWORD
     echo ""
 
-    echo -en "${amarelo}ADMIN_ICAT_EMAIL: ${reset}"
-    read -r ADMIN_ICAT_EMAIL
+
 
     # === SECRET_KEY ===
     echo ""
@@ -34470,7 +34469,7 @@ telemetria MCP finalizado
 cd dados_vps
 
 cat > dados_n8n${1:+_$1}_mpc <<EOL
-[ MCP DO N8N ]
+[ MCP DE N8N ]
 
 Dominio del Webhook del MCP: $WEBHOOK_URL/mcp
 EOL
@@ -34488,7 +34487,7 @@ instalado_msg
 guarde_os_dados_msg
 
 ## Dados da Aplicação:
-echo -e "\e[32m[ MCP DO N8N ]\e[0m"
+echo -e "\e[32m[ MCP DE N8N ]\e[0m"
 echo ""
 
 echo -e "\e[33mDominio Webhook:\e[97m $WEBHOOK_URL/mcp\e[0m"
