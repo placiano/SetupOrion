@@ -1,5 +1,10 @@
 <img src="https://github.com/user-attachments/assets/f1381a28-79e2-4fea-984c-4440476cdcc2" alt="SetupOrion">
 
+> [!NOTE]
+> Este repositorio es una traducción al español del repositorio original [SetupOrion](https://github.com/oriondesign2015/SetupOrion).
+> Todos los créditos van para **OrionDesign**.
+
+
 <p align="center">
   Este Auto instalador é uma solução <b>100% gratuita</b>, com o intuito de ajudar toda a comunidade a instalar as principais ferramentas do mercado de Automações/Marketing em seu servidor.
   <b>Você não precisa instalar todos os programas contidos no mesmo, pois você poderá escolher qual das ferramentas você quer instalar.</b>

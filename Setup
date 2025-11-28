@@ -96,7 +96,7 @@ nome_verificando(){
 ## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
 
 desc_ver(){
-echo -e "                            Este script recomenda o uso do$amarelo Debian 11$branco.$reset"
+echo -e "                            Este script recomienda el uso de$amarelo Debian 11$branco.$reset"
 echo ""
 } 
 
@@ -106,7 +106,7 @@ echo ""
 
 clear
 nome_verificando
-echo "Aguarde enquanto verificamos algumas informações."
+echo "Espere mientras verificamos alguna información."
 sleep 1
 
 # Verifica se está usando Ubuntu 20.04
@@ -121,13 +121,13 @@ fi
 
 # Verifica se o usuário é root
 if [ "$(id -u)" -ne 0 ]; then
-    echo "Este script precisa ser executado como root. Executando sudo su..."
+    echo "Este script necesita ser ejecutado como root. Ejecutando sudo su..."
     sudo su
 fi
 
 # Verifica se o usuário está no diretório /root/
 if [ "$PWD" != "/root" ]; then
-    echo "Mudando para o diretório /root/"
+    echo "Cambiando al directorio /root/"
     cd /root || exit
 fi
 
@@ -141,9 +141,9 @@ nome_iniciando
 ## Fazendo upgrade
 sudo apt upgrade -y > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "1/14 - [ OK ] - Fazendo Upgrade"
+    echo "1/14 - [ OK ] - Realizando Actualización"
 else
-    echo "1/14 - [ OFF ] - Fazendo Upgrade"
+    echo "1/14 - [ OFF ] - Realizando Actualización"
 fi
 
 echo ""
@@ -241,9 +241,9 @@ echo ""
 ## Fazendo update
 sudo apt update > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "11/14 - [ OK ] - Fazendo Update"
+    echo "11/14 - [ OK ] - Realizando Update"
 else
-    echo "11/14 - [ OFF ] - Fazendo Update"
+    echo "11/14 - [ OFF ] - Realizando Update"
 fi
 
 echo ""
@@ -251,9 +251,9 @@ echo ""
 ## Fazendo upgrade
 sudo apt upgrade -y > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "12/14 - [ OK ] - Fazendo Upgrade"
+    echo "12/14 - [ OK ] - Realizando Upgrade"
 else
-    echo "12/14 - [ OFF ] - Fazendo Upgrade"
+    echo "12/14 - [ OFF ] - Realizando Upgrade"
 fi
 
 echo ""
@@ -274,35 +274,18 @@ if [ -e "SetupOrion" ]; then
     rm SetupOrion
 fi
 
-# Clonar repositorio privado
-echo ""
-echo -e "${amarelo}Este script necesita credenciales Git para acceder al repositorio privado.${reset}"
-echo ""
-echo -en "${amarelo}Usuario GitHub: ${reset}"
-read -r git_user
-echo -en "${amarelo}Token/Password GitHub: ${reset}"
-read -rs git_token
-echo ""
-
-# Clonar el repositorio privado
-git clone --depth 1 https://${git_user}:${git_token}@github.com/placiano/vps_iulia.git /tmp/vps_iulia_setup > /dev/null 2>&1
+# Baixa o script
+curl -sSL https://raw.githubusercontent.com/placiano/SetupOrion/main/SetupOrion -o SetupOrion
 if [ $? -eq 0 ]; then
-    echo "14/14 - [ OK ] - Clonando repositorio privado"
-
-    # Copiar SetupOrion y templates al directorio actual
-    cp /tmp/vps_iulia_setup/SetupOrion/SetupOrion .
-    cp -r /tmp/vps_iulia_setup/SetupOrion/templates . 2>/dev/null || true
-
-    # Limpiar repositorio temporal
-    rm -rf /tmp/vps_iulia_setup
-
-    # Ejecutar el script
+    echo "14/14 - [ OK ] - Descargando el script"
+    # Executa o script baixado
     chmod +x SetupOrion
     ./SetupOrion
 else
-    echo "14/14 - [ OFF ] - Error al clonar repositorio privado"
-    echo "Verifique sus credenciales y conexión a Internet"
-    echo "Encerrando o setup"
+    echo "14/14 - [ OFF ] - Descargando el script"
+    echo "Finalizando el setup"
+    sleep 5
+fi
     sleep 5
 fi
 
