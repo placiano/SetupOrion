@@ -2272,7 +2272,7 @@ criar_arquivo() {
 
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "\e[97mObs: La contraseña no aparecerá al escribir\e[0m"
-    read -s -p "Escriba la Contraseña (ex: @Senha123_): " SENHA
+    read -s -p "Escriba la Contraseña (ex: @Contrasena123_): " SENHA
     echo ""
 
     verificar_token "$PORTAINER_URL" "$USUARIO" "$SENHA" true
@@ -2300,7 +2300,7 @@ verificar_campos() {
     
         echo -e "\e[97mPaso$amarelo 3/3\e[0m"
         echo -e "\e[97mObs: La contraseña no aparecerá al escribir\e[0m"
-        read -s -p "Escriba la Contraseña (ex: @Senha123_): " SENHA
+        read -s -p "Escriba la Contraseña (ex: @Contrasena123_): " SENHA
         echo ""
 
         ATUALIZAR="true" ## Verificar se já existe TOKEN no arquivo
@@ -2320,7 +2320,7 @@ verificar_campos() {
     
         echo -e "\e[97mPaso$amarelo 3/3\e[0m"
         echo -e "\e[97mObs: La contraseña no aparecerá al escribir\e[0m"
-        read -s -p "Escriba la Contraseña (ex: @Senha123_): " NOVA_SENHA
+        read -s -p "Escriba la Contraseña (ex: @Contrasena123_): " NOVA_SENHA
         echo ""
 
         verificar_token "$PORTAINER_URL" "$NOVO_USUARIO" "$NOVA_SENHA" true
@@ -2389,7 +2389,7 @@ verificar_token() {
             
                 echo -e "\e[97mPaso$amarelo 3/3\e[0m"
                 echo -e "\e[97mObs: La contraseña no aparecerá al escribir\e[0m"
-                read -s -p "Escriba la Contraseña (ex: @Senha123_): " SENHA
+                read -s -p "Escriba la Contraseña (ex: @Contrasena123_): " SENHA
                 echo ""
                 ATUALIZAR="true"
             else
@@ -3373,7 +3373,7 @@ ferramenta_testeemail() {
 
         echo -e "\e[97mPaso${amarelo} 3/5\e[0m"
         echo -e "${amarelo}--> Sin caracteres especiales: !#$ | Si está usando Gmail, use la contraseña de aplicación"
-        echo -en "\e[33mEscriba la Contraseña del correo (ex: @Senha123_): \e[0m"
+        echo -en "\e[33mEscriba la Contraseña del correo (ex: @Contrasena123_): \e[0m"
         read -r senha_teste
         echo ""
 
@@ -4269,7 +4269,7 @@ stack_editavel #> /dev/null 2>&1
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Postgres."
+#    echo "Ups, no se pudo levantar la stack de Postgres."
 #fi
 
 ## Salvando informações da instalação dentro de /dados_vps/
@@ -4415,7 +4415,7 @@ telemetria Postgres finalizado
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Postgres."
+#    echo "Ups, no se pudo levantar la stack de Postgres."
 #fi
 
 ## Salvando informações da instalação dentro de /dados_vps/
@@ -4544,7 +4544,7 @@ stack_editavel #> /dev/null 2>&1
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de PgVector."
+#    echo "Ups, no se pudo levantar la stack de PgVector."
 #fi
 #docker stack deploy --prune --resolve-image always -c pgvector.yaml pgvector > /dev/null 2>&1
 
@@ -4690,7 +4690,7 @@ telemetria PgVector finalizado
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de PgVector."
+#    echo "Ups, no se pudo levantar la stack de PgVector."
 #fi
 #docker stack deploy --prune --resolve-image always -c pgvector.yaml pgvector > /dev/null 2>&1
 
@@ -4814,7 +4814,7 @@ stack_editavel #> /dev/null 2>&1
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Redis."
+#    echo "Ups, no se pudo levantar la stack de Redis."
 #fi
 
 ## Salvando informações da instalação dentro de /dados_vps/
@@ -4951,7 +4951,7 @@ telemetria Redis finalizado
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Redis."
+#    echo "Ups, no se pudo levantar la stack de Redis."
 #fi
 
 ## Salvando informações da instalação dentro de /dados_vps/
@@ -5085,7 +5085,7 @@ stack_editavel #> /dev/null 2>&1
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Postgres."
+#    echo "Ups, no se pudo levantar la stack de Postgres."
 #fi
 
 wait_stack "mysql${1:+_$1}_mysql${1:+_$1}"
@@ -5235,7 +5235,7 @@ telemetria MySQL finalizado
 #    echo "2/2 - [ OK ] - Deploy Stack"
 #else
 #    echo "2/2 - [ OFF ] - Deploy Stack"
-#    echo "Ops, no se pudo levantar la stack de Postgres."
+#    echo "Ups, no se pudo levantar la stack de Postgres."
 #fi
 
 #docker stack deploy --prune --resolve-image always -c mysql.yaml mysql #> /dev/null 2>&1
@@ -5330,7 +5330,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_email_chatwoot
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_email_chatwoot
     echo ""
     
     ## Pergunta o Host SMTP do email
@@ -7558,7 +7558,7 @@ while true; do
     echo -e "\e[97mPaso$amarelo 4/4\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, numero y un caracter especial @ o _"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mEscriba una contraseña para MinIO (ex: @Senha123_): \e[0m" && read -r senha_minio
+    echo -en "\e[33mEscriba una contraseña para MinIO (ex: @Contrasena123_): \e[0m" && read -r senha_minio
     echo ""
     
     ## Limpa o terminal
@@ -7833,7 +7833,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 6/8\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_email_typebot
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_email_typebot
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -8263,7 +8263,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 5/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_smtp_n8n
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_n8n
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -8845,7 +8845,7 @@ while true; do
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, numero y un caracter especial @ o _"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Senha123_): \e[0m" && read -r pass_flowise
+    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Contrasena123_): \e[0m" && read -r pass_flowise
     echo ""
     
     ## Limpa o terminal
@@ -9110,7 +9110,7 @@ while true; do
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, numero y un caracter especial @ o _"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Senha123_): \e[0m" && read -r pass_PgAdmin_4
+    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Contrasena123_): \e[0m" && read -r pass_PgAdmin_4
     echo ""
     
     ## Limpa o terminal
@@ -9347,7 +9347,7 @@ while true; do
     echo -e "\e[97mPaso$amarelo 4/4\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, numero y un caracter especial @ o _"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Senha123_): \e[0m" && read -r pass_nocobase
+    echo -en "\e[33mEscriba una contraseña para el usuario (ex: @Contrasena123_): \e[0m" && read -r pass_nocobase
     echo ""
     
     ## Limpa o terminal
@@ -10231,7 +10231,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r pass_baserow
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r pass_baserow
     echo ""
 
 
@@ -11233,7 +11233,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_email_calcom
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_email_calcom
     echo ""
     
     ## Pergunta o Host SMTP do email
@@ -11552,7 +11552,7 @@ while true; do
     ## Pergunta o senha da ferramenta
     echo -e "\e[97mPaso$amarelo 4/4\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mEscriba una Contraseña (ex: @Senha123_): \e[0m" && read -r senha_email_mautic
+    echo -en "\e[33mEscriba una Contraseña (ex: @Contrasena123_): \e[0m" && read -r senha_email_mautic
     echo ""
     
     ## Limpa o terminal
@@ -12397,7 +12397,7 @@ while true; do
     ## Pergunta o nome do Senha do Motor
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$ y/o espacio"
-    echo -en "\e[33mEscriba la Contraseña de MOTOR (ex: @Senha123_): \e[0m" && read -r senha_email_woofed
+    echo -en "\e[33mEscriba la Contraseña de MOTOR (ex: @Contrasena123_): \e[0m" && read -r senha_email_woofed
     echo ""
     
     ## Limpa o terminal
@@ -12913,7 +12913,7 @@ while true; do
     ## Pergunta a Senha SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del correo (ex: @Senha123_): \e[0m" && read -r senha_formbricks
+    echo -en "\e[33mEscriba la Contraseña SMTP del correo (ex: @Contrasena123_): \e[0m" && read -r senha_formbricks
     echo ""
     
     ## Pergunta o Host SMTP
@@ -14462,7 +14462,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_email_chatwoot
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_email_chatwoot
     echo ""
     
     ## Pergunta o Host SMTP do email
@@ -16334,7 +16334,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP (ex: @Senha123_): \e[0m" && read -r senha_smtp_docuseal
+    echo -en "\e[33mEscriba la Contraseña SMTP (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_docuseal
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -17092,13 +17092,13 @@ while true; do
     ##Pergunta o Dominio do Qdrant
     #read -r ip _ <<<$(hostname -I)
     #echo -e "\e[97mPasso$amarelo 2/10\e[0m"
-    #echo -en "\e[33mDigite o dominio do Qdrant (ex: http://$ip  ou http://qdrant.oriondesign.art.br): \e[0m" && read -r url_quedrant
+    #echo -en "\e[33mIngrese o dominio do Qdrant (ex: http://$ip  ou http://qdrant.oriondesign.art.br): \e[0m" && read -r url_quedrant
     #echo ""
 
     ##Pergunta a Api Key do Qdrant
     #key_dify_rand=$(openssl rand -hex 16)
     #echo -e "\e[97mPasso$amarelo 3/10\e[0m"
-    #echo -en "\e[33mDigite a Api Key do Qdrant (ex: $key_dify_rand): \e[0m" && read -r apikey_qdrant
+    #echo -en "\e[33mIngrese a Api Key do Qdrant (ex: $key_dify_rand): \e[0m" && read -r apikey_qdrant
     #echo ""
 
     ##Pergunta o Email SMTP
@@ -17116,7 +17116,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 5/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Senha123_): \e[0m" && read -r senha_email_dify
+    echo -en "\e[33mEscriba la Contraseña SMTP del Correo (ex: @Contrasena123_): \e[0m" && read -r senha_email_dify
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -18243,7 +18243,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese la Contraseña de Admin (ex: @Senha123_): \e[0m" && read -r senha_affine
+    echo -en "\e[33mIngrese la Contraseña de Admin (ex: @Contrasena123_): \e[0m" && read -r senha_affine
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -18254,7 +18254,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 5/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP (ex: @Senha123_): \e[0m" && read -r senha_smtp_affine
+    echo -en "\e[33mIngrese la Contraseña SMTP (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_affine
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -18586,7 +18586,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese la Contraseña para el Admin (ex: @Senha123_): \e[0m" && read -r senha_directus
+    echo -en "\e[33mIngrese la Contraseña para el Admin (ex: @Contrasena123_): \e[0m" && read -r senha_directus
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -18597,7 +18597,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 5/7\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP (ex: @Senha123_): \e[0m" && read -r senha_smtp_directus
+    echo -en "\e[33mIngrese la Contraseña SMTP (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_directus
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -18946,7 +18946,7 @@ while true; do
     ## Pergunta a Senha SMTP
     echo -e "\e[97mPaso$amarelo 3/5\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del email (ex: @Senha123_): \e[0m" && read -r senha_vaultwarden
+    echo -en "\e[33mIngrese la Contraseña SMTP del email (ex: @Contrasena123_): \e[0m" && read -r senha_vaultwarden
     echo ""
     
     ## Pergunta o Host SMTP
@@ -19219,7 +19219,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, número y un carácter especial @ o _"
-    echo -en "\e[33mIngrese la Contraseña del Usuario (ex: @Senha123_): \e[0m" && read -r pass_nextcloud
+    echo -en "\e[33mIngrese la Contraseña del Usuario (ex: @Contrasena123_): \e[0m" && read -r pass_nextcloud
     echo ""
 
 
@@ -19825,13 +19825,13 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     #echo -e "\e[97mPasso$amarelo 4/4\e[0m"
-    #echo -en "\e[33mDigite o Usuario MySQL  (ex: oriondesign): \e[0m" && read -r user_phpmyadmin
+    #echo -en "\e[33mIngrese o Usuario MySQL  (ex: oriondesign): \e[0m" && read -r user_phpmyadmin
     #echo ""
 
     ##Pergunta o Dominio para a ferramenta
     #echo -e "\e[97mPasso$amarelo 4/4\e[0m"
     #echo -e "$amarelo--> Sem caracteres especiais: \!#$"
-    #echo -en "\e[33mDigite a Senha MySQL (ex: @Senha123_): \e[0m" && read -r pass_phpmyadmin
+    #echo -en "\e[33mIngrese a Senha MySQL (ex: @Contrasena123_): \e[0m" && read -r pass_phpmyadmin
     #echo ""
     
     ## Limpa o terminal
@@ -20173,29 +20173,29 @@ while true; do
 
     ###Pergunta o Email SMTP
     #echo -e "\e[97mPasso$amarelo 4/10\e[0m"
-    #echo -en "\e[33mDigite o Email para SMTP (ex: contato@oriondesign.art.br): \e[0m" && read -r email_supabase
+    #echo -en "\e[33mIngrese o Email para SMTP (ex: contato@oriondesign.art.br): \e[0m" && read -r email_supabase
     #echo ""
 
     ##Pergunta o usuário do Email SMTP
     #echo -e "\e[97mPasso$amarelo 5/10\e[0m"
     #echo -e "$amarelo--> Caso não tiver um usuario do email, use o proprio email abaixo"
-    #echo -en "\e[33mDigite o Usuário para SMTP (ex: oriondesign ou contato@oriondesign.art.br): \e[0m" && read -r usuario_email_supabase
+    #echo -en "\e[33mIngrese o Usuário para SMTP (ex: oriondesign ou contato@oriondesign.art.br): \e[0m" && read -r usuario_email_supabase
     #echo ""
     
     ## Pergunta a senha do SMTP
     #echo -e "\e[97mPasso$amarelo 6/10\e[0m"
     #echo -e "$amarelo--> Sem caracteres especiais: \!#$ | Se estiver usando gmail use a senha de app"
-    #echo -en "\e[33mDigite a Senha SMTP do Email (ex: @Senha123_): \e[0m" && read -r senha_email_supabase
+    #echo -en "\e[33mIngrese a Senha SMTP do Email (ex: @Contrasena123_): \e[0m" && read -r senha_email_supabase
     #echo ""
 
     ## Pergunta o Host SMTP do email
     #echo -e "\e[97mPasso$amarelo 7/10\e[0m"
-    #echo -en "\e[33mDigite o Host SMTP do Email (ex: smtp.hostinger.com): \e[0m" && read -r smtp_email_supabase
+    #echo -en "\e[33mIngrese o Host SMTP do Email (ex: smtp.hostinger.com): \e[0m" && read -r smtp_email_supabase
     #echo ""
 
     ## Pergunta a porta SMTP do email
     #echo -e "\e[97mPasso$amarelo 8/10\e[0m"
-    #echo -en "\e[33mDigite a porta SMTP do Email (ex: 465): \e[0m" && read -r porta_smtp_supabase
+    #echo -en "\e[33mIngrese a porta SMTP do Email (ex: 465): \e[0m" && read -r porta_smtp_supabase
     #echo ""
 
     ## Verifica se a porta é 465, se sim deixa o ssl true, se não, deixa false 
@@ -21312,7 +21312,7 @@ while true; do
 
     ##Pergunta o Dominio para aplicação
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
-    echo -en "\e[33mIngrese la Contraseña (ex: @Senha123_): \e[0m" && read -r pass_ntfy
+    echo -en "\e[33mIngrese la Contraseña (ex: @Contrasena123_): \e[0m" && read -r pass_ntfy
     echo ""
 
     ## Limpa o terminal
@@ -21566,7 +21566,7 @@ while true; do
 
     ##Pergunta o Dominio para aplicação
     echo -e "\e[97mPaso$amarelo 3/8\e[0m"
-    echo -en "\e[33mIngrese la contraseña de MongoDB (ex: @Senha123_): \e[0m" && read -r pass_mongodb_lowcoder
+    echo -en "\e[33mIngrese la contraseña de MongoDB (ex: @Contrasena123_): \e[0m" && read -r pass_mongodb_lowcoder
     echo ""
 
     ## Pergunta o email SMTP
@@ -21583,7 +21583,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 6/8\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_smtp_lowcoder
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_lowcoder
     echo ""
     
     ## Pergunta o Host SMTP do email
@@ -21968,7 +21968,7 @@ while true; do
     ##Pergunta a Senha para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una contraseña para el usuario de LangFlow (ex: @Senha123_): \e[0m" && read -r pass_langflow
+    echo -en "\e[33mIngrese una contraseña para el usuario de LangFlow (ex: @Contrasena123_): \e[0m" && read -r pass_langflow
     echo ""
 
     ## Limpa o terminal
@@ -22844,7 +22844,7 @@ while true; do
     ## Pergunta o senha da ferramenta
     echo -e "\e[97mPaso$amarelo 5/10\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una Contraseña para el Admin (ex: @Senha123_): \e[0m" && read -r pass_humhub
+    echo -en "\e[33mIngrese una Contraseña para el Admin (ex: @Contrasena123_): \e[0m" && read -r pass_humhub
     echo ""
 
     ## Pergunta o Email SMTP
@@ -22861,7 +22861,7 @@ while true; do
     ## Pergunta a Senha SMTP
     echo -e "\e[97mPaso$amarelo 8/10\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del email (ex: @Senha123_): \e[0m" && read -r senha_smtp_humhub
+    echo -en "\e[33mIngrese la Contraseña SMTP del email (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_humhub
     echo ""
     
     ## Pergunta o Host SMTP
@@ -23224,7 +23224,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
-    echo -en "\e[33mIngrese la Contraseña del usuario (ex: @Senha123_): \e[0m" && read -r pass_yourls
+    echo -en "\e[33mIngrese la Contraseña del usuario (ex: @Contrasena123_): \e[0m" && read -r pass_yourls
     echo ""
     ## Limpa o terminal
     clear
@@ -23479,7 +23479,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r pass_smtp_twentycrm
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r pass_smtp_twentycrm
     echo ""
     
     ## Pergunta o Host SMTP do email
@@ -24122,7 +24122,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 6/8\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_email_outline
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_email_outline
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -25669,7 +25669,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_email_documenso
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_email_documenso
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -26027,7 +26027,7 @@ while true; do
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 4/10\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una Contraseña para el Usuario (ex: @Senha123_): \e[0m" && read -r pass_moodle
+    echo -en "\e[33mIngrese una Contraseña para el Usuario (ex: @Contrasena123_): \e[0m" && read -r pass_moodle
     echo ""
 
     ##Pergunta o Dominio para a ferramenta
@@ -26050,7 +26050,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 8/10\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_smtp_moodle
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_moodle
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -26409,7 +26409,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_smtp_tooljet
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_smtp_tooljet
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -27069,7 +27069,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
-    echo -en "\e[33mIngrese una Contraseña para el Usuario (ex: @Senha123_): \e[0m" && read -r pass_clickhouse
+    echo -en "\e[33mIngrese una Contraseña para el Usuario (ex: @Contrasena123_): \e[0m" && read -r pass_clickhouse
     echo ""
     
     ## Limpa o terminal
@@ -28402,7 +28402,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de app"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_email_krayincrm
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_email_krayincrm
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -28827,7 +28827,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 5/10\e[0m"
-    echo -en "\e[33mIngrese la contraseña del administrador (ex: @Senha123_): \e[0m" && read -r senha_adm_planka
+    echo -en "\e[33mIngrese la contraseña del administrador (ex: @Contrasena123_): \e[0m" && read -r senha_adm_planka
     echo ""
 
     ##Pergunta o Email SMTP
@@ -28844,7 +28844,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 8/10\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de app"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r senha_email_planka
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r senha_email_planka
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -29622,7 +29622,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
-    echo -en "\e[33mIngrese una contraseña para el usuario (ex: @Senha123_): \e[0m" && read -r senha_keycloak
+    echo -en "\e[33mIngrese una contraseña para el usuario (ex: @Contrasena123_): \e[0m" && read -r senha_keycloak
     echo ""
     
     ## Limpa o terminal
@@ -29886,7 +29886,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 2/2\e[0m"
-    echo -en "\e[33mIngrese la Contraseña del usuario Administrador (ex: @Senha123_): \e[0m" && read -r senha_frappe
+    echo -en "\e[33mIngrese la Contraseña del usuario Administrador (ex: @Contrasena123_): \e[0m" && read -r senha_frappe
     echo ""
 
     ## Limpa o terminal
@@ -30795,7 +30795,7 @@ while true; do
     echo -e "\e[97mPaso$amarelo 4/9\e[0m"
     echo -e "$amarelo--> Mínimo 8 caracteres. Use Letras MAYÚSCULAS y minúsculas, número y un carácter especial @ o _"
     echo -e "$amarelo--> Evite los caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una contraseña para el usuario (ex: @Senha123_): \e[0m" && read -r pass_evoai
+    echo -en "\e[33mIngrese una contraseña para el usuario (ex: @Contrasena123_): \e[0m" && read -r pass_evoai
     echo ""
 
     ##Pergunta o Email SMTP
@@ -30812,7 +30812,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 7/9\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de app"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r smtp_pass_evoai
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r smtp_pass_evoai
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -31223,7 +31223,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 4/6\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de app"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Senha123_): \e[0m" && read -r smtp_pass_passbolt
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ex: @Contrasena123_): \e[0m" && read -r smtp_pass_passbolt
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -32413,7 +32413,7 @@ while true; do
     ## Pergunta o senha da ferramenta
     echo -e "\e[97mPaso$amarelo 4/4\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una Contraseña (ej: @Senha123_): \e[0m" && read -r shlink_pass
+    echo -en "\e[33mIngrese una Contraseña (ej: @Contrasena123_): \e[0m" && read -r shlink_pass
     echo ""
     
     ## Limpa o terminal
@@ -33053,7 +33053,7 @@ while true; do
     ## Pergunta a senha do SMTP
     echo -e "\e[97mPaso$amarelo 6/8\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$ | Si está usando gmail use la contraseña de aplicación"
-    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ej: @Senha123_): \e[0m" && read -r hoppscotch_smtp_pass
+    echo -en "\e[33mIngrese la Contraseña SMTP del Email (ej: @Contrasena123_): \e[0m" && read -r hoppscotch_smtp_pass
     echo ""
 
     ## Pergunta o Host SMTP do email
@@ -33513,7 +33513,7 @@ while true; do
 
     ##Pergunta o Dominio para a ferramenta
     echo -e "\e[97mPaso$amarelo 4/4\e[0m"
-    echo -en "\e[33mIngrese una contraseña para TranscreveZap (ej: @Senha123_): \e[0m" && read -r pass_transcrevezap
+    echo -en "\e[33mIngrese una contraseña para TranscreveZap (ej: @Contrasena123_): \e[0m" && read -r pass_transcrevezap
     echo ""
     
     ## Limpa o terminal
@@ -34497,7 +34497,7 @@ while true; do
         clear
         erro_msg
         echo ""
-        echo -e "Ops, parece que no instaló la opción \e[32m[28] N8N + Nodes Quepasa${reset} ${branco}de nuestro instalador.${reset}"
+        echo -e "Ups, parece que no instaló la opción \e[32m[28] N8N + Nodes Quepasa${reset} ${branco}de nuestro instalador.${reset}"
         echo "Instale antes de intentar instalar esta aplicación."
         echo ""
         echo "Presione CTRL C para salir del instalador."
@@ -34520,7 +34520,7 @@ portainer.reset() {
         echo "1/7 - [ OK ]"
     else
         echo "1/7 - [ OFF ]"
-        echo "Ops, no se pudo detener el servicio de portainer"
+        echo "Ups, no se pudo detener el servicio de portainer"
     fi
 
     docker pull portainer/helper-reset-password > /dev/null 2>&1
@@ -34528,7 +34528,7 @@ portainer.reset() {
         echo "2/7 - [ OK ]"
     else
         echo "2/7 - [ OFF ]"
-        echo "Ops, no se pudo subir el servicio de reset password de portainer"
+        echo "Ups, no se pudo subir el servicio de reset password de portainer"
     fi
 
     script -c "docker run --rm -v /var/lib/docker/volumes/portainer_data/_data:/data portainer/helper-reset-password" output.txt > /dev/null 2>&1
@@ -34536,7 +34536,7 @@ portainer.reset() {
         echo "3/7 - [ OK ]"
     else
         echo "3/7 - [ OFF ]"
-        echo "Ops, no se pudo resetear la contraseña de portainer"
+        echo "Ups, no se pudo resetear la contraseña de portainer"
     fi
 
     cd
@@ -34547,7 +34547,7 @@ portainer.reset() {
         echo "4/7 - [ OK ]"
     else
         echo "4/7 - [ OFF ]"
-        echo "Ops, no se pudo subir la stack de portainer"
+        echo "Ups, no se pudo subir la stack de portainer"
     fi
 
     USER=$(grep -oP 'user: \K[^,]*' output.txt)
@@ -34555,7 +34555,7 @@ portainer.reset() {
         echo "5/7 - [ OK ]"
     else
         echo "5/7 - [ OFF ]"
-        echo "Ops, no se pudo obtener el usuario de portainer"
+        echo "Ups, no se pudo obtener el usuario de portainer"
     fi
 
     PASSWORD=$(grep -oP 'login: \K.*' output.txt)
@@ -34563,7 +34563,7 @@ portainer.reset() {
         echo "6/7 - [ OK ]"
     else
         echo "6/7 - [ OFF ]"
-        echo "Ops, no se pudo obtener la contraseña de portainer"
+        echo "Ups, no se pudo obtener la contraseña de portainer"
     fi
 
     rm output.txt
@@ -34571,7 +34571,7 @@ portainer.reset() {
         echo "7/7 - [ OK ]"
     else
         echo "7/7 - [ OFF ]"
-        echo "Ops, no se pudo eliminar el archivo output.txt o no existe"
+        echo "Ups, no se pudo eliminar el archivo output.txt o no existe"
     fi
 
     echo ""
@@ -34609,7 +34609,7 @@ ctop() {
         echo "1/2 - [ OK ] - Descargando CTOP"
     else
         echo "1/2 - [ OFF ] - Descargando CTOP"
-        echo "Ops, no se pudo descargar CTOP"
+        echo "Ups, no se pudo descargar CTOP"
     fi
 
     sudo chmod +x /usr/local/bin/ctop
@@ -34617,7 +34617,7 @@ ctop() {
         echo "2/2 - [ OK ] - Dando permiso a CTOP"
     else
         echo "2/2 - [ OFF ] - Dando permiso a CTOP"
-        echo "Ops, no se pudo dar permiso a CTOP"
+        echo "Ups, no se pudo dar permiso a CTOP"
     fi
     echo ""
     echo "Instalado, escriba CTOP fuera de nuestro Setup para ejecutarlo en cualquier momento."
@@ -34641,7 +34641,7 @@ htop() {
         echo "Instalado, escriba HTOP fuera de nuestro Setup para ejecutarlo en cualquier momento."
     else
         echo "1/1 - [ OFF ] - Instalando HTOP"
-        echo "Ops, no se pudo instalar HTOP"
+        echo "Ups, no se pudo instalar HTOP"
     fi
 
     echo ""
@@ -34787,7 +34787,7 @@ if [ $? -eq 0 ]; then
     echo "1/2 - [ OK ] - Creando Stack"
 else
     echo "1/2 - [ OFF ] - Creando Stack"
-    echo "Ops, no se pudo crear la stack de Traefik"
+    echo "Ups, no se pudo crear la stack de Traefik"
 fi
 
 docker stack deploy --prune --resolve-image always -c traefik.yaml traefik
@@ -34838,7 +34838,7 @@ while true; do
     ## Pergunta o senha da ferramenta
     echo -e "\e[97mPaso$amarelo 3/3\e[0m"
     echo -e "$amarelo--> Sin caracteres especiales: \!#$"
-    echo -en "\e[33mIngrese una Contraseña (ej: @Senha123_): \e[0m" && read -r traefik_pass
+    echo -en "\e[33mIngrese una Contraseña (ej: @Contrasena123_): \e[0m" && read -r traefik_pass
     echo ""
 
 ## Pergunta se as respostas estão corretas
@@ -34979,7 +34979,7 @@ if [ $? -eq 0 ]; then
     echo "1/2 - [ OK ] - Creando Stack"
 else
     echo "1/2 - [ OFF ] - Creando Stack"
-    echo "Ops, no se pudo crear la stack de Traefik"
+    echo "Ups, no se pudo crear la stack de Traefik"
 fi
 
 docker stack deploy --prune --resolve-image always -c traefik.yaml traefik
