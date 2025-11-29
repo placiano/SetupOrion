@@ -5503,7 +5503,7 @@ services:
       - FORCE_SSL=true
 
     ## 🌍 Idioma/Localização padrão
-      - DEFAULT_LOCALE=pt_BR
+      - DEFAULT_LOCALE=es_ES
       - TZ=Europe/Madrid
 
     ## ☁️ Google Cloud - Modifique de acordo com os seus dados
@@ -5615,7 +5615,7 @@ services:
       - FORCE_SSL=true
 
     ## 🌍 Idioma/Localização padrão
-      - DEFAULT_LOCALE=pt_BR
+      - DEFAULT_LOCALE=es_ES
       - TZ=Europe/Madrid
 
     ## ☁️ Google Cloud - Modifique de acordo com os seus dados
@@ -6025,7 +6025,7 @@ services:
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - DEL_INSTANCE=false
       - QRCODE_LIMIT=1902
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
       
     ## 📱 Configuración del Cliente
     ## Pegue a versão em: https://web.whatsapp.com/sw.js
@@ -6090,7 +6090,7 @@ services:
       - WA_BUSINESS_TOKEN_WEBHOOK=evolution${1:+_$1}
       - WA_BUSINESS_URL=https://graph.facebook.com
       - WA_BUSINESS_VERSION=v23.0
-      - WA_BUSINESS_LANGUAGE=pt_BR
+      - WA_BUSINESS_LANGUAGE=es_ES
 
     ## 📊 Telemetria
       - TELEMETRY=false
@@ -6475,7 +6475,7 @@ services:
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - DEL_INSTANCE=false
       - QRCODE_LIMIT=1902
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
       
     ## 📱 Configuración del Cliente
     ## Pegue a versão em: https://web.whatsapp.com/sw.js
@@ -6517,7 +6517,7 @@ services:
       - WA_BUSINESS_TOKEN_WEBHOOK=evolution
       - WA_BUSINESS_URL=https://graph.facebook.com
       - WA_BUSINESS_VERSION=v20.0
-      - WA_BUSINESS_LANGUAGE=pt_BR
+      - WA_BUSINESS_LANGUAGE=es_ES
 
     ## 📊 Telemetria
       - TELEMETRY=false
@@ -7215,7 +7215,7 @@ services:
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - DEL_INSTANCE=false
       - QRCODE_LIMIT=1902
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
       
     ## 📱 Configuración del Cliente
     ## Pegue a versão em: https://web.whatsapp.com/sw.js
@@ -7280,7 +7280,7 @@ services:
       - WA_BUSINESS_TOKEN_WEBHOOK=evolution${1:+_$1}
       - WA_BUSINESS_URL=https://graph.facebook.com
       - WA_BUSINESS_VERSION=v23.0
-      - WA_BUSINESS_LANGUAGE=pt_BR
+      - WA_BUSINESS_LANGUAGE=es_ES
 
     ## 📊 Telemetria
       - TELEMETRY=false
@@ -8473,7 +8473,7 @@ services:
     ## 🕒 Zona Horaria
       - GENERIC_TIMEZONE=Europe/Madrid
       - TZ=Europe/Madrid
-      #- N8N_DEFAULT_LOCALE=pt-BR
+      #- N8N_DEFAULT_LOCALE=es
 
     deploy:
       mode: replicated
@@ -8571,7 +8571,7 @@ services:
       ## 🕒 Zona Horaria
       - GENERIC_TIMEZONE=Europe/Madrid
       - TZ=Europe/Madrid
-      #- N8N_DEFAULT_LOCALE=pt-BR
+      #- N8N_DEFAULT_LOCALE=es
       
     deploy:
       mode: replicated
@@ -8669,7 +8669,7 @@ services:
       ## 🕒 Zona Horaria
       - GENERIC_TIMEZONE=Europe/Madrid
       - TZ=Europe/Madrid
-      #- N8N_DEFAULT_LOCALE=pt-BR
+      #- N8N_DEFAULT_LOCALE=es
       
     deploy:
       mode: replicated
@@ -10014,7 +10014,7 @@ services:
       - VIRTUAL_HOST=$url_wordpress
 
       ## Localização
-      - WP_LOCALE=pt_BR
+      - WP_LOCALE=es_ES
 
     deploy:
       mode: replicated
@@ -12534,7 +12534,7 @@ services:
       - SECRET_KEY_BASE=$encryption_key_woofed
 
       ## Idioma
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
 
       ## Permitir/Bloquear novas Inscrições
       - ENABLE_USER_SIGNUP=true
@@ -12608,7 +12608,7 @@ services:
       - SECRET_KEY_BASE=$encryption_key_woofed
 
       ## Idioma
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
 
       ## Permitir/Bloquear novas Inscrições
       - ENABLE_USER_SIGNUP=true
@@ -12671,7 +12671,7 @@ services:
       - SECRET_KEY_BASE=$encryption_key_woofed
 
       ## Idioma
-      - LANGUAGE=pt-BR
+      - LANGUAGE=es
 
       ## Permitir/Bloquear novas Inscrições
       - ENABLE_USER_SIGNUP=true
@@ -14643,8 +14643,8 @@ services:
       - FORCE_SSL=true
 
       ## Idioma/Localização padrão
-      - DEFAULT_LOCALE=pt_BR
-      - TZ=America/Brasil
+      - DEFAULT_LOCALE=es_ES
+      - TZ=Europe/Madrid
 
       ## Google Cloud - Modifique de acordo com os seus dados (lembre-se de mudar no chatwoot_sidekiq)
       #- GOOGLE_OAUTH_CLIENT_ID=369777777777-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
@@ -14750,7 +14750,7 @@ services:
       - FORCE_SSL=true
 
       ## Idioma/Localização padrão
-      - DEFAULT_LOCALE=pt_BR
+      - DEFAULT_LOCALE=es_ES
       - TZ=Europe/Madrid
 
       ## Google Cloud - Modifique de acordo com os seus dados (lembre-se de mudar no chatwoot_sidekiq)
@@ -22362,7 +22362,7 @@ services:
       - DATABASE_URL=postgresql://postgres:$senha_postgres@postgres:5432/openproject${1:+_$1}
 
       ## Configurações
-      - OPENPROJECT_DEFAULT__LANGUAGE=pt-BR
+      - OPENPROJECT_DEFAULT__LANGUAGE=es
 
       ## Datos SMTP
       ## Deixei comentado pois a environment da senha não esta funcionando como o esperado
@@ -24314,7 +24314,7 @@ services:
       - MAIL_SSL_ENABLE=$smtp_secure_outline
 
       ## Confoigurações Globais
-      - DEFAULT_LANGUAGE=pt_BR
+      - DEFAULT_LANGUAGE=es_ES
       - WEB_CONCURRENCY=2
 
       ## Datos Google
@@ -26915,7 +26915,7 @@ services:
       - DOCKER_ENABLE_SECURITY=false
       - SYSTEM_MAXFILESIZE=100
       - LANGS=en_GB,en_US,ar_AR,de_DE,fr_FR,es_ES,zh_CN,zh_TW,ca_CA,it_IT,sv_SE,pl_PL,ro_RO,ko_KR,pt_BR,ru_RU,el_GR,hi_IN,hu_HU,tr_TR,id_ID
-      - SYSTEM_DEFAULTLOCALE=BR
+      - SYSTEM_DEFAULTLOCALE=ES
       - METRICS_ENABLED=true
       - SYSTEM_GOOGLEVISIBILITY=false
 
@@ -28530,8 +28530,8 @@ services:
 
     ## Configurações Globais da Aplicação
       - APP_NAME=Krayin CRM - Orion
-      - APP_LOCALE=pt_BR
-      - APP_CURRENCY=BRL
+      - APP_LOCALE=es_ES
+      - APP_CURRENCY=EUR
       - APP_TIMEZONE=Europe/Madrid
       - LOG_CHANNEL=stack
       - LOG_LEVEL=debug
