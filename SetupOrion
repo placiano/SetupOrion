@@ -7639,8 +7639,8 @@ services:
 ## --------------------------- ORION --------------------------- ##
 
   minio${1:+_$1}:
-    image: quay.io/minio/minio:latest ## Versão do MinIO
-    #image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z ## Versão antiga do MinIO
+    #image: quay.io/minio/minio:latest ## Versão do MinIO
+    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z ## Versão antiga do MinIO
     command: server /data --console-address ":9001"
 
     volumes:
