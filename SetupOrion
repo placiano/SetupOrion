@@ -36,8 +36,8 @@ home_directory="$HOME"
 dados_vps="${home_directory}/dados_vps/dados_vps"
 
 dados() {
-    nome_servidor=$(grep "Nombre del Servidor:" "$dados_vps" | awk -F': ' '{print $2}')
-    nome_rede_interna=$(grep "Red interna:" "$dados_vps" | awk -F': ' '{print $2}')
+    nome_servidor=$(grep -E "(Nombre del Servidor:|Nome do Servidor:)" "$dados_vps" | awk -F': ' '{print $2}')
+    nome_rede_interna=$(grep -E "(Red interna:|Rede interna:)" "$dados_vps" | awk -F': ' '{print $2}')
 }
 
 ## // ## // ## // ## // ## // ## // ## // ## //## // ## // ## // ## // ## // ## // ## // ## // ##
@@ -2099,7 +2099,7 @@ stack_editavel(){
     sed -i 's/Dominio do portainer: https:\/\/\(.*\)/Dominio do portainer: \1/' "$arquivo"
 
     ## Obtiene el usuario de portainer
-    USUARIO=$(grep "Usuario: " /root/dados_vps/dados_portainer | awk -F "Usuario: " '{print $2}')
+    USUARIO=$(grep -E "(Usuario:|Usuário:)" /root/dados_vps/dados_portainer | awk -F ": " '{print $2}')
     if [ $? -eq 0 ]; then
         echo -e "4/10 - [ OK ] - Obteniendo usuario de portainer: $bege$USUARIO$reset"
     else
@@ -2108,7 +2108,7 @@ stack_editavel(){
 
 
     ## Obtiene la contraseña de portainer
-    SENHA=$(grep "Contraseña: " /root/dados_vps/dados_portainer | awk -F "Contraseña: " '{print $2}')
+    SENHA=$(grep -E "(Contraseña:|Senha:)" /root/dados_vps/dados_portainer | awk -F ": " '{print $2}')
     esconder_senha "$SENHA"
     if [ $? -eq 0 ]; then
         echo -e "5/10 - [ OK ] - Obteniendo la contraseña de portainer: $bege$SENHAOCULTA$reset"
@@ -2117,7 +2117,7 @@ stack_editavel(){
     fi
 
     ## Obtiene la URL de portainer
-    PORTAINER_URL=$(grep "Dominio de portainer: " /root/dados_vps/dados_portainer | awk -F "Dominio de portainer: " '{print $2}')
+    PORTAINER_URL=$(grep -E "(Dominio de portainer:|Dominio do portainer:)" /root/dados_vps/dados_portainer | awk -F ": " '{print $2}')
     if [ $? -eq 0 ]; then
         echo -e "6/10 - [ OK ] - Obteniendo dominio de Portainer: $bege$PORTAINER_URL$reset"
     else
@@ -2281,9 +2281,9 @@ criar_arquivo() {
 
 ## Función para verificar los campos del archivo de datos de Portainer
 verificar_campos() {
-    PORTAINER_URL=$(grep -oP '(?<=Dominio de portainer: ).*' /root/dados_vps/dados_portainer)
-    USUARIO=$(grep -oP '(?<=Usuario: ).*' /root/dados_vps/dados_portainer)
-    SENHA=$(grep -oP '(?<=Contraseña: ).*' /root/dados_vps/dados_portainer)
+    PORTAINER_URL=$(grep -oP '(?<=Dominio (de|do) portainer: ).*' /root/dados_vps/dados_portainer)
+    USUARIO=$(grep -oP '(?<=Usu(a|á)rio: ).*' /root/dados_vps/dados_portainer)
+    SENHA=$(grep -oP '(?<=(Contraseña|Senha): ).*' /root/dados_vps/dados_portainer)
 
     ## se por acaso não tiver login nem senha lá vem para ca
     if [ -z "$USUARIO" ] || [ -z "$SENHA" ]; then
