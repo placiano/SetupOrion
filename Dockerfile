@@ -1,13 +1,13 @@
 FROM nginx:alpine
 
-# Remove default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
+# Remove default nginx config and static assets
+RUN rm -rf /usr/share/nginx/html/* /etc/nginx/conf.d/default.conf
 
-# Copy Setup script as index.html (so it's served at root) and as Setup
-COPY Setup /usr/share/nginx/html/index.html
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy Setup and SetupOrion scripts
 COPY Setup /usr/share/nginx/html/Setup
-
-# Copy SetupOrion script
 COPY SetupOrion /usr/share/nginx/html/SetupOrion
 
 # Expose port 80
