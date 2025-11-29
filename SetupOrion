@@ -21182,12 +21182,10 @@ services:
 volumes:
   supabase${1:+_$1}_db_config:
     external: true
-    name: supabase${1:+_$1}_db_config
 
 networks:
-  $nome_rede_interna: ## Nome da rede interna
+  $nome_rede_interna:
     external: true
-    name: $nome_rede_interna ## Nome da rede interna
 EOL
 if [ $? -eq 0 ]; then
     echo "1/10 - [ OK ] - Creando Stack"
