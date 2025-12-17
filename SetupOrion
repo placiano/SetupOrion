@@ -3876,7 +3876,7 @@ services:
 ## --------------------------- ORION --------------------------- ##
 
   traefik:
-    image: traefik:v3.4
+    image: traefik:v3.6.4
     command:
       - "--api.dashboard=true"
       - "--providers.swarm=true"
@@ -3965,9 +3965,9 @@ echo ""
 sleep 1
 
 ## En prueba contra Rate Limit de Docker Hub
-pull ghcr.io/traefik/traefik:v3.4
+pull ghcr.io/traefik/traefik:v3.6.4
 
-docker tag ghcr.io/traefik/traefik:v3.4 traefik/traefik:v3.4
+docker tag ghcr.io/traefik/traefik:v3.6.4 traefik:v3.6.4
 
 ## Usa o serviço wait_stack "traefik" para verificar se o serviço esta online
 wait_stack "traefik"
@@ -34737,7 +34737,7 @@ services:
 ## --------------------------- ORION --------------------------- ##
 
   traefik:
-    image: traefik:v3.4
+    image: traefik:v3.6.4
     command:
       - "--api.dashboard=true"
       - "--providers.swarm=true"
@@ -34918,7 +34918,7 @@ services:
   ## --------------------------- ORION --------------------------- ##
 
   traefik:
-    image: traefik:v3.4
+    image: traefik:v3.6.4
     command:
       - "--api.dashboard=true"
       - "--providers.swarm=true"
